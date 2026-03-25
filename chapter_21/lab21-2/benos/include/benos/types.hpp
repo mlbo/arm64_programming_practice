@@ -22,10 +22,10 @@ using iptr = intptr_t;
 
 // Memory constants
 constexpr usize PAGE_SHIFT = 12;
-constexpr usize PAGE_SIZE  = 1UL << PAGE_SHIFT;
+constexpr usize PAGE_SIZE  = 1ULL << PAGE_SHIFT;
 constexpr usize PAGE_MASK  = ~(PAGE_SIZE - 1);
 
-constexpr auto page_align(uptr addr) -> uptr {
+constexpr auto page_align_up(uptr addr) -> uptr {
     return (addr + PAGE_SIZE - 1) & PAGE_MASK;
 }
 

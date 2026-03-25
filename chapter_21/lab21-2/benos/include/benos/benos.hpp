@@ -5,7 +5,7 @@
 #include "error.hpp"
 #include "new.hpp"
 
-// Subsystems (添加时取消注释)
+// Subsystems (uncomment when adding)
 // #include "mm/page_allocator.hpp"
 // #include "kernel/process.hpp"
 // #include "kernel/console.hpp"
