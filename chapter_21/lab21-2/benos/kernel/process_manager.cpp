@@ -4,13 +4,14 @@
 
 namespace benos {
 
-// ProcessManager singleton instance
-static ProcessManager process_manager_instance;
-ProcessManager& g_process_manager = process_manager_instance;
-
+// Meyers Singleton - instance created inside instance() function
 auto ProcessManager::instance() -> ProcessManager& {
+    static ProcessManager process_manager_instance;
     return process_manager_instance;
 }
+
+// Global reference - initialize on first use
+ProcessManager& g_process_manager = ProcessManager::instance();
 
 auto ProcessManager::create_process(void (*fn)(), u64 arg) -> i32 {
     // Call the C do_fork function

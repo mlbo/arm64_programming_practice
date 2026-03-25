@@ -1,9 +1,11 @@
+// lib/printk.cpp - Console output implementation
+// Refactored to C++ while maintaining C compatibility
+
+extern "C" {
 #include <stdarg.h>
 #include <asm/uart.h>
 #include <type.h>
 #include <string.h>
-
-extern "C" {
 
 #define CONSOLE_PRINT_BUFFER_SIZE 1024
 static char print_buf[CONSOLE_PRINT_BUFFER_SIZE];
@@ -71,11 +73,12 @@ static char *number(char *str, u64 num, int base, int size, int precision
 		}
 	}
 
-	if (type & SPECIAL)
+	if (type & SPECIAL) {
 		if (base == 16)
 			size -= 2;
 		else if (base == 8)
 			size--;
+	}
 
 	i = 0;
 	if (num == 0)
@@ -92,13 +95,14 @@ static char *number(char *str, u64 num, int base, int size, int precision
 	if (sign)
 		*str++ = sign;
 
-	if (type & SPECIAL)
+	if (type & SPECIAL) {
 		if (base == 8)
 			*str++ = '0';
 		else if (base == 16) {
 			*str++ = '0';
 			*str++ = digits[33];
 		}
+	}
 	if (!(type & LEFT))
 		while (size-- > 0)
 			*str++ = c;
@@ -227,7 +231,7 @@ repeat:
 		case 's':
 			s = va_arg(arg, char *);
 			if (!s)
-				s = "<NULL>";
+				s = (char *)"<NULL>";
 			len = strlen(s);
 			if (precision < 0)
 				precision = len;
@@ -318,7 +322,7 @@ repeat:
 		pos = number(pos, num, base, field_width, precision, flags);
 	}
 
-	*pos = '\0';
+	*pos = '\\0';
 	return pos - string;
 }
 
@@ -359,24 +363,24 @@ int vprintk(const char *fmt, va_list args)
 
 namespace benos {
 
-int Console::printf(const char* fmt, ...) {
-	va_list args;
-	va_start(args, fmt);
-	int ret = ::vprintk(fmt, args);
-	va_end(args);
-	return ret;
-}
-
-int Console::vprintf(const char* fmt, va_list args) {
-	return ::vprintk(fmt, args);
-}
-
 void Console::putchar(char c) {
 	uart_send(c);
 }
 
 void Console::puts(const char* s) {
 	uart_send_string(const_cast<char*>(s));
+}
+
+int Console::printf(const char* fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	int ret = vprintk(fmt, args);
+	va_end(args);
+	return ret;
+}
+
+int Console::vprintf(const char* fmt, va_list args) {
+	return vprintk(fmt, args);
 }
 
 auto Console::instance() -> Console& {

@@ -3,8 +3,9 @@
 
 #include <benos/types.hpp>
 
-// Forward declaration of C structs
+// Forward declarations only - do not include C headers here
 struct task_struct;
+union task_union;
 
 namespace benos {
 
@@ -32,7 +33,7 @@ public:
     auto priority() const -> i32;
 
 private:
-    // This class wraps the C task_struct, doesn't own data
+    // This class wraps the C task_struct, does not own data
 };
 
 // Process manager - singleton that wraps C scheduler functions
@@ -54,7 +55,7 @@ extern ProcessManager& g_process_manager;
 
 } // namespace benos
 
-// C compatibility - interface with existing scheduler code
+// C compatibility declarations
 extern "C" {
     int do_fork(unsigned long clone_flags, unsigned long fn, unsigned long arg);
     void switch_to(struct task_struct *next);
@@ -62,34 +63,3 @@ extern "C" {
     extern struct task_struct *g_task[];
     extern union task_union init_task_union;
 }
-
-// Legacy C struct definitions from sched.h
-#ifndef NR_TASK
-#define NR_TASK 128
-#endif
-
-#ifndef THREAD_SIZE
-#define THREAD_SIZE (1 * 4096)  // PAGE_SIZE
-#define THREAD_START_SP (THREAD_SIZE - 8)
-#endif
-
-struct cpu_context {
-    unsigned long x19;
-    unsigned long x20;
-    unsigned long x21;
-    unsigned long x22;
-    unsigned long x23;
-    unsigned long x24;
-    unsigned long x25;
-    unsigned long x26;
-    unsigned long x27;
-    unsigned long x28;
-    unsigned long fp;
-    unsigned long sp;
-    unsigned long pc;
-};
-
-union task_union {
-    struct task_struct task;
-    unsigned long stack[THREAD_SIZE/sizeof(long)];
-};
