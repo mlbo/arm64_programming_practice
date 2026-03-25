@@ -3,6 +3,8 @@
 #include <type.h>
 #include <string.h>
 
+extern "C" {
+
 #define CONSOLE_PRINT_BUFFER_SIZE 1024
 static char print_buf[CONSOLE_PRINT_BUFFER_SIZE];
 
@@ -336,3 +338,52 @@ int printk(const char *fmt, ...)
 	}
 	return len;
 }
+
+int vprintk(const char *fmt, va_list args)
+{
+	int len;
+	int i;
+
+	len = myprintf(print_buf, sizeof(print_buf), fmt, args);
+	for (i = 0; i < len; i++) {
+		putchar(print_buf[i]);
+		if (i > sizeof(print_buf))
+			break;
+	}
+	return len;
+}
+
+} // extern "C"
+
+#include "benos/kernel/console.hpp"
+
+namespace benos {
+
+int Console::printf(const char* fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	int ret = ::vprintk(fmt, args);
+	va_end(args);
+	return ret;
+}
+
+int Console::vprintf(const char* fmt, va_list args) {
+	return ::vprintk(fmt, args);
+}
+
+void Console::putchar(char c) {
+	uart_send(c);
+}
+
+void Console::puts(const char* s) {
+	uart_send_string(const_cast<char*>(s));
+}
+
+auto Console::instance() -> Console& {
+	static Console console;
+	return console;
+}
+
+Console& g_console = Console::instance();
+
+} // namespace benos
