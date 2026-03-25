@@ -29,6 +29,15 @@ SECTIONS
 		*(.data.init_task)
 	}
 
+	/* C++ init array for global constructors */
+	. = ALIGN(8);
+	__init_array_start = .;
+	.init_array : {
+		*(.init_array)
+		*(.init_array.*)
+	}
+	__init_array_end = .;
+
 	. = ALIGN(0x8);
 	_edata = .;
 	_bss = .;

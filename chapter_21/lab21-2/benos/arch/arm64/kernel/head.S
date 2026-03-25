@@ -95,6 +95,9 @@ el1_entry:
 	ldr x9, [x8]
 	mov sp, x9
 
+	/* Call C++ global constructors */
+	bl _call_init_array
+
 	bl kernel_main
 	b proc_hang // should never come here
 
@@ -116,4 +119,20 @@ print_el:
 	bl put_uart
 
 	mov x30, x10
+	ret
+
+/* Call all function pointers in .init_array section */
+.section .text
+.global _call_init_array
+_call_init_array:
+	ldr x0, =__init_array_start
+	ldr x1, =__init_array_end
+1:
+	cmp x0, x1
+	b.ge 2f
+	ldr x2, [x0]
+	blr x2
+	add x0, x0, #8
+	b 1b
+2:
 	ret
