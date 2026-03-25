@@ -5,3 +5,4 @@ CFLAGS_printk.o  += -Wno-dangling-else
 
 obj-y           += printk.o
 obj-y           += string.o
+obj-y           += uart_wrapper.o
