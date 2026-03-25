@@ -66,6 +66,7 @@ name-fix = $(subst $(comma),_,$(subst -,_,$1))
 _c_flags       = $(CFLAGS) $(EXTRA_CFLAGS) $(CFLAGS_$(basetarget).o)
 _a_flags       = $(AFLAGS) $(EXTRA_AFLAGS) $(AFLAGS_$(basetarget).o)
 _cpp_flags     = $(CPPFLAGS) $(EXTRA_CPPFLAGS) $(CPPFLAGS_$(@F))
+_cxx_flags     = $(CXXFLAGS) $(EXTRA_CXXFLAGS) $(CXXFLAGS_$(basetarget).o)
 
 # If building the kernel in a separate objtree expand all occurrences
 # of -Idir to -I$(srctree)/dir except for absolute paths (starting with '/').
@@ -74,6 +75,7 @@ ifeq ($(KBUILD_SRC),)
 __c_flags	= $(_c_flags)
 __a_flags	= $(_a_flags)
 __cpp_flags	= $(_cpp_flags)
+__cxx_flags	= $(_cxx_flags)
 else
 
 # -I$(obj) locates generated .h files
@@ -83,6 +85,7 @@ else
 __c_flags	= $(call addtree,-I$(obj)) $(call flags,_c_flags)
 __a_flags	=                          $(call flags,_a_flags)
 __cpp_flags	=                          $(call flags,_cpp_flags)
+__cxx_flags	= $(call addtree,-I$(obj)) $(call flags,_cxx_flags)
 endif
 
 c_flags        = -Wp,-MD,$(depfile) $(NOSTDINC_FLAGS) $(CPPFLAGS) \
@@ -92,6 +95,9 @@ a_flags        = -Wp,-MD,$(depfile) $(NOSTDINC_FLAGS) $(CPPFLAGS) \
 		 $(__a_flags)
 
 cpp_flags      = -Wp,-MD,$(depfile) $(NOSTDINC_FLAGS) $(__cpp_flags)
+
+cxx_flags      = -Wp,-MD,$(depfile) $(NOSTDINC_FLAGS) $(CPPFLAGS) \
+		 $(__cxx_flags)
 
 ld_flags       = $(LDFLAGS) $(EXTRA_LDFLAGS)
 

@@ -16,6 +16,7 @@ targets :=
 subdir-y :=
 EXTRA_AFLAGS   :=
 EXTRA_CFLAGS   :=
+EXTRA_CXXFLAGS :=
 EXTRA_CPPFLAGS :=
 EXTRA_LDFLAGS  :=
 
@@ -113,6 +114,33 @@ endef
 $(obj)/%.o: $(src)/%.c FORCE
 	$(call cmd,force_checksrc)
 	$(call if_changed_rule,cc_o_c)
+
+# Compile C++ sources (.cpp)
+# ---------------------------------------------------------------------------
+
+quiet_cmd_cxx_s_cpp = CXX $(quiet_modtag)  $@
+cmd_cxx_s_cpp       = $(CXX) $(cxx_flags) -S -o $@ $<
+
+$(obj)/%.s: $(src)/%.cpp FORCE
+	$(call if_changed_dep,cxx_s_cpp)
+
+quiet_cmd_cxx_o_cpp = CXX $(quiet_modtag)  $@
+
+cmd_cxx_o_cpp = $(CXX) $(cxx_flags) -o $@ -c $<
+
+define rule_cxx_o_cpp
+	$(call echo-cmd,checksrc) $(cmd_checksrc)			  \
+	$(call echo-cmd,cxx_o_cpp) $(cmd_cxx_o_cpp);			  \
+	scripts/basic/fixdep $(depfile) $@ '$(call make-cmd,cxx_o_cpp)' >    \
+	                                              $(dot-target).tmp;  \
+	rm -f $(depfile);						  \
+	mv -f $(dot-target).tmp $(dot-target).cmd
+endef
+
+# Built-in and composite module parts
+$(obj)/%.o: $(src)/%.cpp FORCE
+	$(call cmd,force_checksrc)
+	$(call if_changed_rule,cxx_o_cpp)
 
 # shp (.shp) files
 quiet_cmd_cp_rel_shp = CP $(quiet_modtag)  $@
