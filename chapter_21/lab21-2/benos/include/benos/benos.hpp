@@ -9,5 +9,5 @@
 // #include "mm/page_allocator.hpp"
 // #include "kernel/process.hpp"
 // #include "kernel/console.hpp"
-// #include "driver/uart.hpp"
-// #include "driver/timer.hpp"
+#include "driver/uart.hpp"
+#include "driver/timer.hpp"
