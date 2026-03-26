@@ -15,7 +15,7 @@ void ffr_init_demo() {
 }
 
 void process_unknown_length(const u8* data, u8* result, usize max_bytes) {
-    u64 offset = 0;
+    uint64_t offset = 0;
 
     while (offset < max_bytes) {
         svbool_t pg = svptrue_b8();

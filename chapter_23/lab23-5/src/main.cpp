@@ -1,11 +1,14 @@
 // lab23-5: SVE Matrix Multiplication Test
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <sys/auxv.h>
 
 #include <asm/hwcap.h>
+#include "sve_matrix.hpp"
 
 // Import types from namespace
-using arm64lab::sve::u8;
-using arm64lab::sve::usize;
-using arm64lab::sve::u32;
 
 constexpr int LOOP = 10000;
 

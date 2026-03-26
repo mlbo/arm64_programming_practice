@@ -1,11 +1,11 @@
 // lab23-1: SVE Basic Test
 
 #include <arm_sve.h>
+#include <cstdio>
+#include "sve_basic.hpp"
 
 // Import types from namespace
-using arm64lab::sve::u8;
-using arm64lab::sve::usize;
-using arm64lab::sve::u32;
+using arm64lab::sve::u64;
 
 int main() {
     printf("=== SVE Basic Test ===\n\n");

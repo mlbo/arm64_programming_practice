@@ -3,13 +3,25 @@
 #pragma once
 
 // Constants needed by both C++ and assembly
+#ifndef PAGE_SHIFT
 #define PAGE_SHIFT    12
+#endif
+#ifndef TABLE_SHIFT
 #define TABLE_SHIFT   9
+#endif
+#ifndef SECTION_SHIFT
 #define SECTION_SHIFT (PAGE_SHIFT + TABLE_SHIFT)
+#endif
 
+#ifndef PAGE_SIZE
 #define PAGE_SIZE     (1ULL << PAGE_SHIFT)
+#endif
+#ifndef SECTION_SIZE
 #define SECTION_SIZE  (1ULL << SECTION_SHIFT)
+#endif
+#ifndef LOW_MEMORY
 #define LOW_MEMORY    (2 * SECTION_SIZE)
+#endif
 
 #ifndef __ASSEMBLY__
 
@@ -37,5 +49,21 @@ constexpr auto page_align_up(uptr addr) -> uptr {
 }
 
 } // namespace arm64lab
+
+// Also make types available in benos namespace
+namespace benos {
+using arm64lab::u8;
+using arm64lab::u16;
+using arm64lab::u32;
+using arm64lab::u64;
+using arm64lab::usize;
+using arm64lab::uptr;
+using arm64lab::i8;
+using arm64lab::i16;
+using arm64lab::i32;
+using arm64lab::i64;
+using arm64lab::isize;
+using arm64lab::iptr;
+} // namespace benos
 
 #endif // __ASSEMBLY__

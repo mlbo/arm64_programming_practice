@@ -1,6 +1,8 @@
 // kernel.cpp - Lab 04-3: CMP/SBC
 #include "uart.hpp"
 
+using arm64lab::u64;
+
 extern "C" auto compare_and_return(u64 a, u64 b) -> u64;
 
 extern "C" void kernel_main() {

@@ -1,6 +1,8 @@
 // kernel.cpp - Lab 04-2: ADDS/CMP/ADC
 #include "uart.hpp"
 
+using arm64lab::u64;
+
 extern "C" void add_inst_test();
 extern "C" auto compare_and_return(u64 a, u64 b) -> u64;
 

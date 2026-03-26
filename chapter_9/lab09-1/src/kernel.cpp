@@ -21,47 +21,47 @@ extern "C" {
 namespace {
 
 void print_memory_layout() {
-    benos::printk("BenOS image layout:\n");
-    benos::printk("  .text.boot: 0x%08lx - 0x%08lx (%6ld B)\n",
+    printk("BenOS image layout:\n");
+    printk("  .text.boot: 0x%08lx - 0x%08lx (%6ld B)\n",
         reinterpret_cast<benos::uptr>(_text_boot),
         reinterpret_cast<benos::uptr>(_etext_boot),
         _etext_boot - _text_boot);
-    benos::printk("       .text: 0x%08lx - 0x%08lx (%6ld B)\n",
+    printk("       .text: 0x%08lx - 0x%08lx (%6ld B)\n",
         reinterpret_cast<benos::uptr>(_text),
         reinterpret_cast<benos::uptr>(_etext),
         _etext - _text);
-    benos::printk("     .rodata: 0x%08lx - 0x%08lx (%6ld B)\n",
+    printk("     .rodata: 0x%08lx - 0x%08lx (%6ld B)\n",
         reinterpret_cast<benos::uptr>(_rodata),
         reinterpret_cast<benos::uptr>(_erodata),
         _erodata - _rodata);
-    benos::printk("       .data: 0x%08lx - 0x%08lx (%6ld B)\n",
+    printk("       .data: 0x%08lx - 0x%08lx (%6ld B)\n",
         reinterpret_cast<benos::uptr>(_data),
         reinterpret_cast<benos::uptr>(_edata),
         _edata - _data);
-    benos::printk("        .bss: 0x%08lx - 0x%08lx (%6ld B)\n",
+    printk("        .bss: 0x%08lx - 0x%08lx (%6ld B)\n",
         reinterpret_cast<benos::uptr>(_bss),
         reinterpret_cast<benos::uptr>(_ebss),
         _ebss - _bss);
 }
 
 void test_printk() {
-    benos::printk("\n=== printk Test ===\n");
+    printk("\n=== printk Test ===\n");
 
     // Test various format specifiers
-    benos::printk("Decimal: %d, %d, %d\n", 123, -456, 0);
-    benos::printk("Hex: 0x%x, 0x%X\n", 0xdeadbeef, 0xcafebabe);
-    benos::printk("Octal: %o\n", 0755);
-    benos::printk("String: %s\n", "Hello, BenOS!");
-    benos::printk("Char: %c %c %c\n", 'A', 'B', 'C');
-    benos::printk("Pointer: %p\n", reinterpret_cast<void*>(0x80000));
+    printk("Decimal: %d, %d, %d\n", 123, -456, 0);
+    printk("Hex: 0x%x, 0x%X\n", 0xdeadbeef, 0xcafebabe);
+    printk("Octal: %o\n", 0755);
+    printk("String: %s\n", "Hello, BenOS!");
+    printk("Char: %c %c %c\n", 'A', 'B', 'C');
+    printk("Pointer: %p\n", reinterpret_cast<void*>(0x80000));
 
     // Test width and padding
-    benos::printk("Width: [%10d] [%-10d] [%010d]\n", 123, 123, 123);
+    printk("Width: [%10d] [%-10d] [%010d]\n", 123, 123, 123);
 
     // Test long long
-    benos::printk("Long long: %lld, 0x%llx\n", 0x123456789ABCDEFLL, 0x123456789ABCDEFLL);
+    printk("Long long: %lld, 0x%llx\n", 0x123456789ABCDEFLL, 0x123456789ABCDEFLL);
 
-    benos::printk("=== Test Complete ===\n\n");
+    printk("=== Test Complete ===\n\n");
 }
 
 }  // anonymous namespace
@@ -73,7 +73,7 @@ extern "C" void kernel_main() {
 
     // Welcome message
     benos::g_uart.send_string("Welcome BenOS!\r\n");
-    benos::printk("printk init done\n");
+    printk("printk init done\n");
 
     // Test printk
     test_printk();

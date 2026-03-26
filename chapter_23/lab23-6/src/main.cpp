@@ -1,11 +1,12 @@
 // lab23-6: SVE FFR Test
-
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <sys/auxv.h>
+#include <arm_sve.h>
 #include <asm/hwcap.h>
-
-// Import types from namespace
-using arm64lab::sve::u8;
-using arm64lab::sve::usize;
-using arm64lab::sve::u32;
+#include "sve_ffr.hpp"
 
 // A simple strlen using FFR concept (simplified version)
 size_t strlen_sve_simple(const char* s) {
@@ -14,7 +15,7 @@ size_t strlen_sve_simple(const char* s) {
     while (true) {
         // Use SVE to check for '\0' in chunks
         svbool_t pg = svptrue_b8();
-        svuint8_t vec = svld1_u8(pg, reinterpret_cast<const u8*>(s + len));
+        svuint8_t vec = svld1_u8(pg, reinterpret_cast<const arm64lab::sve::u8*>(s + len));
 
         // Find '\0'
         svbool_t found = svcmpeq_n_u8(pg, vec, 0);
@@ -24,7 +25,7 @@ size_t strlen_sve_simple(const char* s) {
             // Find position of first '\0'
             // Use cntp to count active lanes before '\0'
             svbool_t before_null = svbrkb_z(pg, found);
-            len += svcntp_b8(before_null);
+            len += svcntp_b8(pg, before_null);
             return len;
         }
 
@@ -47,10 +48,10 @@ int main() {
 
     // Test 2: Process unknown length array
     printf("=== Test 2: Process Unknown Length Array ===\n");
-    constexpr usize DATA_SIZE = 256;
+    constexpr size_t DATA_SIZE = 256;
 
-    u8* data = static_cast<u8*>(malloc(DATA_SIZE));
-    u8* result = static_cast<u8*>(malloc(DATA_SIZE));
+    arm64lab::sve::u8* data = static_cast<arm64lab::sve::u8*>(malloc(DATA_SIZE));
+    arm64lab::sve::u8* result = static_cast<arm64lab::sve::u8*>(malloc(DATA_SIZE));
 
     if (!data || !result) {
         printf("Failed to allocate buffers\n");
@@ -58,8 +59,8 @@ int main() {
     }
 
     // Initialize data
-    for (usize i = 0; i < DATA_SIZE; ++i) {
-        data[i] = static_cast<u8>(i);
+    for (size_t i = 0; i < DATA_SIZE; ++i) {
+        data[i] = static_cast<arm64lab::sve::u8>(i);
     }
 
     // Process
@@ -67,8 +68,8 @@ int main() {
 
     // Verify
     bool success = true;
-    for (usize i = 0; i < DATA_SIZE; ++i) {
-        u8 expected = static_cast<u8>(i + 1);
+    for (size_t i = 0; i < DATA_SIZE; ++i) {
+        arm64lab::sve::u8 expected = static_cast<arm64lab::sve::u8>(i + 1);
         if (result[i] != expected) {
             printf("Mismatch at %zu: expected %u, got %u\n",
                    i, expected, result[i]);

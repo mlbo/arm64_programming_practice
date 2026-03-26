@@ -1,13 +1,14 @@
 // lab23-2: SVE Interleaved Load/Store Test
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <sys/auxv.h>
 #include <asm/hwcap.h>
+#include "sve_interleaved.hpp"
 
-// Import types from namespace
-using arm64lab::sve::u8;
-using arm64lab::sve::usize;
-using arm64lab::sve::u32;
-
-constexpr usize IMAGE_PIXELS = 4096 * 2160;
+constexpr size_t IMAGE_PIXELS = 4096 * 2160;
 
 int main() {
     printf("=== SVE Interleaved Load/Store Test ===\n\n");
@@ -18,13 +19,13 @@ int main() {
         return 1;
     }
 
-    usize pixel_bytes = IMAGE_PIXELS * 3;
+    size_t pixel_bytes = IMAGE_PIXELS * 3;
 
     // Allocate buffers
-    u8* rgb_src = static_cast<u8*>(malloc(pixel_bytes));
-    u8* bgr_scalar = static_cast<u8*>(malloc(pixel_bytes));
-    u8* bgr_sve_intr = static_cast<u8*>(malloc(pixel_bytes));
-    u8* bgr_sve_asm = static_cast<u8*>(malloc(pixel_bytes));
+    arm64lab::sve::u8* rgb_src = static_cast<arm64lab::sve::u8*>(malloc(pixel_bytes));
+    arm64lab::sve::u8* bgr_scalar = static_cast<arm64lab::sve::u8*>(malloc(pixel_bytes));
+    arm64lab::sve::u8* bgr_sve_intr = static_cast<arm64lab::sve::u8*>(malloc(pixel_bytes));
+    arm64lab::sve::u8* bgr_sve_asm = static_cast<arm64lab::sve::u8*>(malloc(pixel_bytes));
 
     if (!rgb_src || !bgr_scalar || !bgr_sve_intr || !bgr_sve_asm) {
         printf("Failed to allocate buffers\n");
@@ -32,8 +33,8 @@ int main() {
     }
 
     // Initialize source with random data
-    for (usize i = 0; i < pixel_bytes; ++i) {
-        rgb_src[i] = static_cast<u8>(rand() & 0xFF);
+    for (size_t i = 0; i < pixel_bytes; ++i) {
+        rgb_src[i] = static_cast<arm64lab::sve::u8>(rand() & 0xFF);
     }
 
     printf("Image size: %zu pixels\n", IMAGE_PIXELS);

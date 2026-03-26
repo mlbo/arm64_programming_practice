@@ -1,14 +1,6 @@
 // asm_test.S - Lab 03-6: memset implementation
 
-.global __memset_16bytes
-__memset_16bytes:
-    mov    x4, #0
-1:
-    stp    x1, x1, [x0], #16    // Store 16 bytes and increment
-    add    x4, x4, #16
-    cmp    x4, x2
-    bne    1b
-    ret
+// __memset_16bytes is defined in memset_asm.S
 
 .global my_memcpy_test
 my_memcpy_test:

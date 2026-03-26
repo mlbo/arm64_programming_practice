@@ -8,16 +8,32 @@ SECTIONS
     . = 0x80000;
 
     /* Boot code must be first */
-    .text.boot : { *(.text.boot) }
+    .text.boot : {
+        _text_boot = .;
+        *(.text.boot)
+        _etext_boot = .;
+    }
 
     /* Regular code */
-    .text : { *(.text*) }
+    .text : {
+        _text = .;
+        *(.text*)
+        _etext = .;
+    }
 
     /* Read-only data */
-    .rodata : { *(.rodata*) }
+    .rodata : {
+        _rodata = .;
+        *(.rodata*)
+        _erodata = .;
+    }
 
     /* Initialized data */
-    .data : { *(.data*) }
+    .data : {
+        _data = .;
+        *(.data*)
+        _edata = .;
+    }
 
     /* C++ constructors */
     .init_array : {

@@ -1,13 +1,14 @@
 // lab23-3: SVE memcpy Test
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <sys/auxv.h>
 #include <asm/hwcap.h>
+#include "sve_memcpy.hpp"
 
-// Import types from namespace
-using arm64lab::sve::u8;
-using arm64lab::sve::usize;
-using arm64lab::sve::u32;
-
-constexpr usize SIZE = 256;
+constexpr size_t SIZE = 256;
 
 int main() {
     printf("=== SVE memcpy Test ===\n\n");
@@ -17,12 +18,12 @@ int main() {
         return 1;
     }
 
-    static u8 a[SIZE];
-    static u8 b[SIZE];
+    static arm64lab::sve::u8 a[SIZE];
+    static arm64lab::sve::u8 b[SIZE];
 
     // Initialize source
-    for (usize i = 0; i < SIZE; ++i) {
-        a[i] = static_cast<u8>(i);
+    for (size_t i = 0; i < SIZE; ++i) {
+        a[i] = static_cast<arm64lab::sve::u8>(i);
     }
     memset(b, 0, SIZE);
 
@@ -31,7 +32,7 @@ int main() {
     arm64lab::sve::sve_memcpy_1b(b, a, SIZE);
 
     bool success = true;
-    for (usize i = 0; i < SIZE; ++i) {
+    for (size_t i = 0; i < SIZE; ++i) {
         if (a[i] != b[i]) {
             printf("Mismatch at %zu: a=%u, b=%u\n", i, a[i], b[i]);
             success = false;
@@ -45,7 +46,7 @@ int main() {
     arm64lab::sve::sve_memcpy_4b(b, a, SIZE);
 
     success = true;
-    for (usize i = 0; i < SIZE; ++i) {
+    for (size_t i = 0; i < SIZE; ++i) {
         if (a[i] != b[i]) {
             printf("Mismatch at %zu: a=%u, b=%u\n", i, a[i], b[i]);
             success = false;
@@ -59,7 +60,7 @@ int main() {
     arm64lab::sve::sve_memcpy_intr(b, a, SIZE);
 
     success = true;
-    for (usize i = 0; i < SIZE; ++i) {
+    for (size_t i = 0; i < SIZE; ++i) {
         if (a[i] != b[i]) {
             printf("Mismatch at %zu: a=%u, b=%u\n", i, a[i], b[i]);
             success = false;
@@ -69,11 +70,11 @@ int main() {
 
     // Performance test
     printf("=== Performance Test ===\n");
-    constexpr usize PERF_SIZE = 64 * 1024 * 1024;  // 64 MB
+    constexpr size_t PERF_SIZE = 64 * 1024 * 1024;  // 64 MB
     constexpr int ITERATIONS = 100;
 
-    u8* src = static_cast<u8*>(malloc(PERF_SIZE));
-    u8* dst = static_cast<u8*>(malloc(PERF_SIZE));
+    arm64lab::sve::u8* src = static_cast<arm64lab::sve::u8*>(malloc(PERF_SIZE));
+    arm64lab::sve::u8* dst = static_cast<arm64lab::sve::u8*>(malloc(PERF_SIZE));
 
     if (!src || !dst) {
         printf("Failed to allocate buffers\n");

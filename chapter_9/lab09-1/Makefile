@@ -4,10 +4,10 @@ board ?= rpi4
 
 ifeq ($(board), rpi3)
 COPS += -DCONFIG_BOARD_PI3B
-QEMU_FLAGS  += -machine raspi3
+QEMU_FLAGS  += -machine raspi3b
 else ifeq ($(board), rpi4)
 COPS += -DCONFIG_BOARD_PI4B
-QEMU_FLAGS  += -machine raspi4
+QEMU_FLAGS  += -machine raspi4b
 endif
 
 # C++ compiler flags
@@ -43,7 +43,7 @@ DEP_FILES = $(OBJ_FILES:%.o=%.d)
 -include $(DEP_FILES)
 
 benos.bin: linker.ld $(OBJ_FILES)
-	$(ARMGNU)-ld -T linker.ld -Map benos.map -o $(BUILD_DIR)/benos.elf $(OBJ_FILES)
+	$(ARMGNU)-ld -n -T linker.ld -Map benos.map -o $(BUILD_DIR)/benos.elf $(OBJ_FILES)
 	$(ARMGNU)-objcopy $(BUILD_DIR)/benos.elf -O binary benos.bin
 	cp $(BUILD_DIR)/benos.elf benos.elf
 

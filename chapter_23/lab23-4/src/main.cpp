@@ -1,11 +1,14 @@
 // lab23-4: SVE strcmp Test
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <sys/auxv.h>
 
 #include <asm/hwcap.h>
+#include "sve_strcmp.hpp"
 
 // Import types from namespace
-using arm64lab::sve::u8;
-using arm64lab::sve::usize;
-using arm64lab::sve::u32;
 
 static int strcmp_c(const char* str1, const char* str2) {
     char c1, c2;

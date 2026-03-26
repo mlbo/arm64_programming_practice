@@ -7,7 +7,7 @@ namespace benos {
 
 class PageAllocator {
 public:
-    static constexpr usize PAGE_SIZE = 4096;
+    // Use PAGE_SIZE from types.hpp macro
 
     void init(uptr start, uptr end);
     auto alloc() -> void*;

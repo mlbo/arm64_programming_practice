@@ -1,11 +1,8 @@
 // lab22-2: NEON Matrix Multiplication Test
 
-#include <time.h>
-
-// Import types from namespace
-using arm64lab::neon::u8;
-using arm64lab::neon::usize;
-using arm64lab::neon::u32;
+#include <cstdio>
+#include <ctime>
+#include "neon_matrix.hpp"
 
 constexpr int LOOP = 10000;
 

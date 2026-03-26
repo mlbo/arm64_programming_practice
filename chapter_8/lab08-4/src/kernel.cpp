@@ -46,7 +46,7 @@ static int print_func_name(unsigned long addr) {
     return 0;
 
 found:
-    p = &func_string;
+    p = func_string;
     if (i == 0) {
         string = p;
         goto done;
@@ -91,7 +91,7 @@ void test_data_process() {
     bl_test();
     adrp_test();
     val = my_atomic_write(0x345);
-    atomic_set(0x11, &p1);
+    atomic_set(&p1, 0x11);
 }
 
 void test_assembler_features() {

@@ -1,11 +1,10 @@
 // lab22-3: Auto-vectorization vs Manual NEON Test
 
-#include <time.h>
-
-// Import types from namespace
-using arm64lab::neon::u8;
-using arm64lab::neon::usize;
-using arm64lab::neon::u32;
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include "auto_vectorization.hpp"
 
 constexpr int ARRAY_SIZE = 1024 * 1024;
 constexpr int IMAGE_PIXELS = 4096 * 2160;
@@ -62,13 +61,13 @@ int main() {
     // === Test 2: RGB/BGR Conversion ===
     printf("=== RGB/BGR Conversion Test ===\n");
 
-    usize pixel_size = IMAGE_PIXELS * 3;
-    u8* rgb_src = static_cast<u8*>(malloc(pixel_size));
-    u8* bgr_scalar = static_cast<u8*>(malloc(pixel_size));
-    u8* bgr_neon = static_cast<u8*>(malloc(pixel_size));
+    size_t pixel_size = IMAGE_PIXELS * 3;
+    arm64lab::neon::u8* rgb_src = static_cast<arm64lab::neon::u8*>(malloc(pixel_size));
+    arm64lab::neon::u8* bgr_scalar = static_cast<arm64lab::neon::u8*>(malloc(pixel_size));
+    arm64lab::neon::u8* bgr_neon = static_cast<arm64lab::neon::u8*>(malloc(pixel_size));
 
-    for (usize i = 0; i < pixel_size; ++i) {
-        rgb_src[i] = static_cast<u8>(rand() & 0xFF);
+    for (size_t i = 0; i < pixel_size; ++i) {
+        rgb_src[i] = static_cast<arm64lab::neon::u8>(rand() & 0xFF);
     }
 
     // Scalar version

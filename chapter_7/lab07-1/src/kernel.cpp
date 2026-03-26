@@ -50,7 +50,7 @@ void test_data_process() {
     adrp_test();
 
     val = my_atomic_write(0x345);
-    atomic_set(0x11, &p1);
+    atomic_set(&p1, 0x11);
 }
 
 } // namespace lab07_1
