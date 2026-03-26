@@ -22,7 +22,7 @@ char uart_recv(void)
 	return(readl(U_DATA_REG) & 0xFF);
 }
 
-void uart_send_string(char *str)
+void uart_send_string(const char* str)
 {
 	int i;
 

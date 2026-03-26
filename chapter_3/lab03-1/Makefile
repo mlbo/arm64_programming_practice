@@ -10,8 +10,9 @@ COPS += -DCONFIG_BOARD_PI4B
 QEMU_FLAGS  += -machine raspi4
 endif
 
-COPS += -g -Wall -nostdlib -nostdinc -Iinclude
-ASMOPS = -g -Iinclude 
+# C++ flags
+COPS += -g -Wall -nostdlib -nostdinc -Iinclude -std=c++17 -fno-exceptions -fno-rtti
+ASMOPS = -g -Iinclude -D__ASSEMBLY__
 
 BUILD_DIR = build
 SRC_DIR = src
@@ -19,7 +20,11 @@ SRC_DIR = src
 all : benos.bin
 
 clean :
-	rm -rf $(BUILD_DIR) *.bin *.elf 
+	rm -rf $(BUILD_DIR) *.bin *.elf
+
+$(BUILD_DIR)/%_cpp.o: $(SRC_DIR)/%.cpp
+	mkdir -p $(@D)
+	$(ARMGNU)-g++ $(COPS) -MMD -c $< -o $@
 
 $(BUILD_DIR)/%_c.o: $(SRC_DIR)/%.c
 	mkdir -p $(@D)
@@ -28,22 +33,25 @@ $(BUILD_DIR)/%_c.o: $(SRC_DIR)/%.c
 $(BUILD_DIR)/%_s.o: $(SRC_DIR)/%.S
 	$(ARMGNU)-gcc $(ASMOPS) -MMD -c $< -o $@
 
-C_FILES = $(wildcard $(SRC_DIR)/*.c)
+CPP_FILES = $(wildcard $(SRC_DIR)/*.cpp)
+# Only include C files if no corresponding C++ file exists
+C_FILES = $(filter-out $(CPP_FILES:.cpp=.c),$(wildcard $(SRC_DIR)/*.c))
 ASM_FILES = $(wildcard $(SRC_DIR)/*.S)
-OBJ_FILES = $(C_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%_c.o)
+OBJ_FILES = $(CPP_FILES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%_cpp.o)
+OBJ_FILES += $(C_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%_c.o)
 OBJ_FILES += $(ASM_FILES:$(SRC_DIR)/%.S=$(BUILD_DIR)/%_s.o)
 
 DEP_FILES = $(OBJ_FILES:%.o=%.d)
 -include $(DEP_FILES)
 
 benos.bin: $(SRC_DIR)/linker.ld $(OBJ_FILES)
-	$(ARMGNU)-ld -T $(SRC_DIR)/linker.ld -o $(BUILD_DIR)/benos.elf  $(OBJ_FILES)
+	$(ARMGNU)-ld -T $(SRC_DIR)/linker.ld -o $(BUILD_DIR)/benos.elf $(OBJ_FILES) -e _start
 	$(ARMGNU)-objcopy $(BUILD_DIR)/benos.elf -O binary benos.bin
-	cp $(BUILD_DIR)/benos.elf benos.elf
 
 QEMU_FLAGS  += -nographic
 
 run:
 	qemu-system-aarch64 $(QEMU_FLAGS) -kernel benos.bin
+
 debug:
-	qemu-system-aarch64 $(QEMU_FLAGS) -kernel benos.bin -S -s
+	qemu-system-aarch64 $(QEMU_FLAGS) -kernel build/benos.elf -S -s

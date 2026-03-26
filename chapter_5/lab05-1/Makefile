@@ -10,8 +10,14 @@ COPS += -DCONFIG_BOARD_PI4B
 QEMU_FLAGS  += -machine raspi4
 endif
 
+# C 编译选项
 COPS += -g -Wall -nostdlib -nostdinc -Iinclude
-ASMOPS = -g -Iinclude 
+
+# C++ 编译选项
+CPPOPS += -g -Wall -nostdlib -nostdinc -Iinclude -fno-exceptions -fno-rtti -std=c++17
+
+# 汇编编译选项
+ASMOPS = -g -Iinclude -D__ASSEMBLY__
 
 BUILD_DIR = build
 SRC_DIR = src
@@ -19,18 +25,28 @@ SRC_DIR = src
 all : benos.bin
 
 clean :
-	rm -rf $(BUILD_DIR) *.bin *.elf 
+	rm -rf $(BUILD_DIR) *.bin *.elf
 
+# C 文件编译规则
 $(BUILD_DIR)/%_c.o: $(SRC_DIR)/%.c
 	mkdir -p $(@D)
 	$(ARMGNU)-gcc $(COPS) -MMD -c $< -o $@
 
+# C++ 文件编译规则
+$(BUILD_DIR)/%_cpp.o: $(SRC_DIR)/%.cpp
+	mkdir -p $(@D)
+	$(ARMGNU)-g++ $(CPPOPS) -MMD -c $< -o $@
+
+# 汇编文件编译规则
 $(BUILD_DIR)/%_s.o: $(SRC_DIR)/%.S
 	$(ARMGNU)-gcc $(ASMOPS) -MMD -c $< -o $@
 
-C_FILES = $(wildcard $(SRC_DIR)/*.c)
+CPP_FILES = $(wildcard $(SRC_DIR)/*.cpp)
+C_FILES = $(filter-out $(CPP_FILES:.cpp=.c),$(wildcard $(SRC_DIR)/*.c))
 ASM_FILES = $(wildcard $(SRC_DIR)/*.S)
+
 OBJ_FILES = $(C_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%_c.o)
+OBJ_FILES += $(CPP_FILES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%_cpp.o)
 OBJ_FILES += $(ASM_FILES:$(SRC_DIR)/%.S=$(BUILD_DIR)/%_s.o)
 
 DEP_FILES = $(OBJ_FILES:%.o=%.d)
@@ -45,5 +61,6 @@ QEMU_FLAGS  += -nographic
 
 run:
 	qemu-system-aarch64 $(QEMU_FLAGS) -kernel benos.bin
+
 debug:
 	qemu-system-aarch64 $(QEMU_FLAGS) -kernel benos.bin -S -s

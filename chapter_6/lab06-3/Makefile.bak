@@ -1,0 +1,20 @@
+# 用户态原子操作测试程序
+ARMGNU ?= aarch64-linux-gnu
+
+COPS = -g -Wall
+ASMOPS = -g
+
+all: atomic_test
+
+atomic_test: atomic_test.c atomic_test.S
+	$(ARMGNU)-gcc $(COPS) -c atomic_test.c -o atomic_test_c.o
+	$(ARMGNU)-gcc $(ASMOPS) -c atomic_test.S -o atomic_test_s.o
+	$(ARMGNU)-gcc atomic_test_c.o atomic_test_s.o -o atomic_test
+
+clean:
+	rm -f *.o atomic_test
+
+run: atomic_test
+	./atomic_test
+
+.PHONY: all clean run

@@ -1,0 +1,18 @@
+# 用户态混合编程
+ARMGNU ?= aarch64-linux-gnu
+
+COPS = -g -Wall -static
+ASMOPS = -g
+
+all: main
+
+main: main.S compare.c
+	$(ARMGNU)-gcc $(COPS) -o main main.S compare.c
+
+clean:
+	rm -f main *.o
+
+run: main
+	./main
+
+.PHONY: all clean run
