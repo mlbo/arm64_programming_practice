@@ -1,5 +1,0 @@
-ROOT_NAME=admin
-TODO_FILE=./agents/arm64-refactor/TODO.md
-AGENTS_FILE=./agents/arm64-refactor/agents-lists.md
-LOG_DIR=./agents/arm64-refactor/log
-TMP_DIR=./agents/arm64-refactor/tmp
