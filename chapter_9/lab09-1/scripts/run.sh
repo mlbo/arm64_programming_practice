@@ -4,9 +4,9 @@
 BOARD=${board:-rpi4}
 
 if [ "$BOARD" = "rpi3" ]; then
-    QEMU_FLAGS="-machine raspi3"
+    QEMU_FLAGS="-machine raspi3b"
 else
-    QEMU_FLAGS="-machine raspi4"
+    QEMU_FLAGS="-machine raspi4b"
 fi
 
 QEMU_FLAGS="$QEMU_FLAGS -nographic"
